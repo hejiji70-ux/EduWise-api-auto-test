@@ -102,7 +102,7 @@ def _assert_expected(data, expected, title):
         for k, v in expected["field_equals"].items():
             actual = data.get(k)
             assert actual == v, "[%s] 字段 %s: 期望=%s, 实际=%s" % (title, k, v, actual)
-    if case.get("expected", {}).get("not_empty"):
+    if expected.get("not_empty"):
         assert len(data) > 0
 
 
