@@ -1,0 +1,16 @@
+base_url: "http://localhost:9096"
+
+admin:
+  login_url: "/api/admin/user/login"
+  username: "admin"
+  password: "123456"
+
+app:
+  login_url: "/api/app/member/login"
+  username: "18029240302"  # 手机号即账号
+  password: "123456"
+
+teacher:
+  login_url: "/api/teacher/user/login"
+  username: "18012345678"  # 手机号即账号（tch_03）
+  password: "123456"

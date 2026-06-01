@@ -1,0 +1,29 @@
+# Teacher 讲师端 — 登录模块测试数据
+cases:
+  - id: teacher_login_001
+    title: "正常手机号登录成功"
+    severity: CRITICAL
+    body:
+      username: "18012345678"
+      password: "123456"
+    expected:
+      status_code: 200
+      has_token: true
+      mobile_equals: "18012345678"
+    assert_fail: false
+
+  - id: teacher_login_002
+    title: "错误密码登录失败"
+    severity: NORMAL
+    body:
+      username: "18012345678"
+      password: "wrongpass"
+    assert_fail: true
+
+  - id: teacher_login_003
+    title: "不存在的手机号登录失败"
+    severity: NORMAL
+    body:
+      username: "19900000000"
+      password: "123456"
+    assert_fail: true

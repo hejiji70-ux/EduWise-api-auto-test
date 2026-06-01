@@ -1,0 +1,89 @@
+# Teacher 讲师端 — 其他接口测试数据（个人信息/课程管理/章节/统计）
+cases:
+  # === 个人信息 ===
+  - id: teacher_info_001
+    feature: "个人信息"
+    title: "获取讲师个人信息"
+    severity: NORMAL
+    method: GET
+    url: "/api/teacher/user/info"
+    need_token: true
+    expected:
+      has_any_field: ["mobile", "name"]
+
+  - id: teacher_info_002
+    feature: "个人信息"
+    title: "获取学科分类列表"
+    severity: NORMAL
+    method: GET
+    url: "/api/teacher/subject/get"
+    need_token: true
+    expected:
+      type_is: list
+      not_empty: true
+
+  # === 课程管理 ===
+  - id: teacher_course_001
+    feature: "课程管理"
+    title: "分页查询讲师课程列表"
+    severity: NORMAL
+    method: POST
+    url: "/api/teacher/course/list"
+    body:
+      current: 1
+      pageSize: 10
+    need_token: true
+    expected:
+      has_fields: ["total"]
+
+  - id: teacher_course_002
+    feature: "课程管理"
+    title: "获取所有课程 ID 和标题"
+    severity: MINOR
+    method: GET
+    url: "/api/teacher/course/list/all"
+    need_token: true
+
+  # 课程创建删除是复杂多步操作，不适合纯数据驱动，保留代码实现
+  # 但用 YAML 定义创建参数（供 test_create_and_delete_course 读取）
+  - id: teacher_course_003_config
+    feature: "课程管理"
+    title: "创建课程草稿并验证后删除（完整生命周期）"
+    severity: CRITICAL
+    is_lifecycle_test: true   # 标记：需要特殊处理的多步测试
+    create_data:
+      lessonNum: 5
+      price: 0
+      free: true
+      description: "这是自动化测试创建的课程，测试完成后会自动删除。"
+
+  - id: teacher_course_004
+    feature: "课程管理"
+    title: "获取草稿箱课程列表"
+    severity: MINOR
+    method: GET
+    url: "/api/teacher/course/draft"
+    need_token: true
+
+  # === 章节管理 ===
+  - id: teacher_chapter_001
+    feature: "章节管理"
+    title: "获取已有课程的章节列表"
+    severity: NORMAL
+    method: POST
+    url: "/api/teacher/course/list"     # 先获取课程 ID
+    body:
+      current: 1
+      pageSize: 1
+    need_token: true
+    extract_id_for_chapter: true        # 特殊标记：提取课程ID查章节
+    chapter_url_template: "/api/teacher/chapter/list/{course_id}"
+
+  # === 数据统计 ===
+  - id: teacher_stats_001
+    feature: "数据统计"
+    title: "获取讲师个人数据统计"
+    severity: NORMAL
+    method: GET
+    url: "/api/teacher/stat/get/common"
+    need_token: true

@@ -1,0 +1,134 @@
+# App 学员端 — 其他接口测试数据（公开内容/个人中心/课程互动）
+cases:
+  # === 公开内容（无需登录） ===
+  - id: app_pub_001
+    feature: "公开内容"
+    title: "获取首页 Banner 列表"
+    severity: MINOR
+    method: GET
+    url: "/api/app/pub/content/get/banners"
+    need_token: false
+
+  - id: app_pub_002
+    feature: "公开内容"
+    title: "获取学科分类列表"
+    severity: NORMAL
+    method: GET
+    url: "/api/app/pub/content/get/subjects"
+    need_token: false
+    expected:
+      type_is: list
+      not_empty: true
+
+  - id: app_pub_003
+    feature: "公开内容"
+    title: "搜索课程列表（无需登录）"
+    severity: CRITICAL
+    method: POST
+    url: "/api/app/pub/content/get/courses"
+    body:
+      current: 1
+      pageSize: 10
+    need_token: false
+    expected:
+      has_fields: ["total"]
+
+  - id: app_pub_004
+    feature: "公开内容"
+    title: "按关键字搜索课程"
+    severity: NORMAL
+    method: POST
+    url: "/api/app/pub/content/get/courses"
+    body:
+      current: 1
+      pageSize: 10
+      title: "Python"
+    need_token: false
+
+  - id: app_pub_005
+    feature: "公开内容"
+    title: "获取课程详情（无需登录，取列表第一条）"
+    severity: NORMAL
+    method: POST
+    url: "/api/app/pub/content/get/courses"
+    body:
+      current: 1
+      pageSize: 1
+    need_token: false
+    extract_id_for_detail: true
+    detail_url_template: "/api/app/pub/content/get/courses/{id}"
+
+  # === 个人中心（需登录） ===
+  - id: app_member_001
+    feature: "个人中心"
+    title: "获取已登录学员信息"
+    severity: NORMAL
+    method: GET
+    url: "/api/app/member/info"
+    need_token: true
+    expected:
+      has_any_field: ["mobile", "nickname"]
+
+  - id: app_member_002
+    feature: "个人中心"
+    title: "未登录访问学员信息应失败"
+    severity: NORMAL
+    method: GET
+    url: "/api/app/member/info"
+    need_token: false
+    assert_fail: true
+
+  # === 课程互动（需登录） ===
+  - id: app_interaction_001
+    feature: "课程互动"
+    title: "检查课程购买状态"
+    severity: NORMAL
+    method: POST
+    url: "/api/app/pub/content/get/courses"
+    body:
+      current: 1
+      pageSize: 1
+    need_token: true
+    extract_id_for_isbuy: true
+    isbuy_url_template: "/api/app/pub/content/get/course/isbuy/{course_id}"
+
+  - id: app_interaction_002
+    feature: "课程互动"
+    title: "获取课程章节和视频列表"
+    severity: NORMAL
+    method: POST
+    url: "/api/app/pub/content/get/courses"
+    body:
+      current: 1
+      pageSize: 1
+    need_token: true
+    extract_id_for_chapter: true
+    chapter_url_template: "/api/app/pub/content/get/chapters/{course_id}"
+    video_url_template: "/api/app/pub/content/get/videos/{chapter_id}"
+
+  - id: app_interaction_003
+    feature: "课程互动"
+    title: "获取我的订单列表"
+    severity: NORMAL
+    method: POST
+    url: "/api/app/pub/content/get/course/orders"
+    body:
+      current: 1
+      pageSize: 10
+    need_token: true
+
+  - id: app_interaction_004
+    feature: "课程互动"
+    title: "获取课程评论列表"
+    severity: MINOR
+    method: POST
+    url: "/api/app/pub/content/get/courses"
+    body:
+      current: 1
+      pageSize: 1
+    need_token: true
+    extract_id_for_comment: true
+    comment_url_template: "/api/app/pub/content/get/course/comment"
+    comment_body:
+      current: 1
+      pageSize: 10

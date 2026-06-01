@@ -1,0 +1,30 @@
+# Admin 管理端 — 登录模块测试数据
+# 同一接口不同输入，数据驱动测试的最佳场景
+cases:
+  - id: admin_login_001
+    title: "正常账号密码登录成功"
+    severity: CRITICAL
+    body:
+      username: "admin"
+      password: "123456"
+    expected:
+      status_code: 200
+      has_token: true
+      username_equals: "admin"
+    assert_fail: false
+
+  - id: admin_login_002
+    title: "错误密码登录失败"
+    severity: NORMAL
+    body:
+      username: "admin"
+      password: "wrongpass"
+    assert_fail: true
+
+  - id: admin_login_003
+    title: "空密码登录失败"
+    severity: NORMAL
+    body:
+      username: "admin"
+      password: ""
+    assert_fail: true

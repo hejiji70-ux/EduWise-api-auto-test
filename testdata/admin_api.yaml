@@ -1,0 +1,146 @@
+# Admin 管理端 — 其他接口测试数据（用户信息/学员管理/讲师管理/课程管理/统计）
+cases:
+  # === 用户信息 ===
+  - id: admin_info_001
+    feature: "用户信息"
+    title: "获取当前登录用户信息"
+    severity: CRITICAL
+    method: GET
+    url: "/api/admin/user/info"
+    need_token: true
+    expected:
+      has_field: "username"
+      field_equals:
+        username: "admin"
+
+  - id: admin_info_002
+    feature: "用户信息"
+    title: "未登录访问应返回鉴权失败"
+    severity: NORMAL
+    method: GET
+    url: "/api/admin/user/info"
+    need_token: false
+    assert_fail: true
+
+  # === 学员管理 ===
+  - id: admin_member_001
+    feature: "学员管理"
+    title: "分页查询学员列表"
+    severity: NORMAL
+    method: POST
+    url: "/api/admin/member/list"
+    body:
+      current: 1
+      pageSize: 5
+    need_token: true
+    expected:
+      has_fields: ["total", "list"]
+
+  - id: admin_member_002
+    feature: "学员管理"
+    title: "按关键字搜索学员"
+    severity: MINOR
+    method: POST
+    url: "/api/admin/member/list"
+    body:
+      current: 1
+      pageSize: 10
+      nickname: "test"
+    need_token: true
+
+  - id: admin_member_003
+    feature: "学员管理"
+    title: "获取指定学员详情"
+    severity: NORMAL
+    method: GET
+    url: "/api/admin/member/info/1206"
+    need_token: true
+    expected:
+      field_equals:
+        id: 1206
+
+  # === 讲师管理 ===
+  - id: admin_teacher_001
+    feature: "讲师管理"
+    title: "查询讲师列表"
+    severity: NORMAL
+    method: POST
+    url: "/api/admin/teacher/list"
+    body:
+      current: 1
+      pageSize: 10
+    need_token: true
+    expected:
+      has_fields: ["total"]
+
+  - id: admin_teacher_002
+    feature: "讲师管理"
+    title: "查询已审核通过的讲师"
+    severity: MINOR
+    method: POST
+    url: "/api/admin/teacher/list"
+    body:
+      current: 1
+      pageSize: 10
+      enable: true
+    need_token: true
+
+  - id: admin_teacher_003
+    feature: "讲师管理"
+    title: "获取指定讲师详情"
+    severity: NORMAL
+    method: GET
+    url: "/api/admin/teacher/info/57"
+    need_token: true
+    expected:
+      field_equals:
+        id: 57
+
+  # === 课程管理 ===
+  - id: admin_course_001
+    feature: "课程管理"
+    title: "分页查询课程列表"
+    severity: NORMAL
+    method: POST
+    url: "/api/admin/course/list"
+    body:
+      current: 1
+      pageSize: 10
+    need_token: true
+    expected:
+      has_fields: ["total"]
+
+  - id: admin_course_002
+    feature: "课程管理"
+    title: "获取课程详情（取列表第一条）"
+    severity: NORMAL
+    method: POST
+    url: "/api/admin/course/list"
+    body:
+      current: 1
+      pageSize: 1
+    need_token: true
+    extract_id_from_list: true   # 特殊标记：从列表提取 ID 再请求详情
+    detail_url_template: "/api/admin/course/info/{id}"
+
+  # === 数据统计 ===
+  - id: admin_stats_001
+    feature: "数据统计"
+    title: "获取平台数据统计概览"
+    severity: NORMAL
+    method: GET
+    url: "/api/admin/stat/get/common"
+    need_token: true
+
+  - id: admin_stats_002
+    feature: "数据统计"
+    title: "每日运营数据统计（POST + query string）"
+    severity: NORMAL
+    method: POST
+    url: "/api/admin/stat/get/daily"
+    params_query:            # 注意：此接口用 query string 而非 JSON body
+      start: "2026-05-01 00:00:00"
+      end: "2026-05-30 23:59:59"
+    need_token: true
+    expected:
+      type_is: list          # 返回值应该是 list

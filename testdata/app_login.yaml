@@ -1,0 +1,29 @@
+# App 学员端 — 登录模块测试数据
+cases:
+  - id: app_login_001
+    title: "正常手机号账号登录成功"
+    severity: CRITICAL
+    body:
+      username: "18029240302"
+      password: "123456"
+    expected:
+      status_code: 200
+      has_token: true
+      mobile_equals: "18029240302"
+    assert_fail: false
+
+  - id: app_login_002
+    title: "错误密码登录失败"
+    severity: NORMAL
+    body:
+      username: "18029240302"
+      password: "wrongpass"
+    assert_fail: true
+
+  - id: app_login_003
+    title: "空账号登录失败"
+    severity: NORMAL
+    body:
+      username: ""
+      password: "123456"
+    assert_fail: true
